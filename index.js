@@ -25,7 +25,6 @@ if (process.env.NODE_ENV !== 'production') {
 // TODO: Switch on chainId
 //       support version #? have the reference frontend support version #s?
 //       possibly contract addresses to watch
-//       Change to generic PrizePoolCreated
 
 const client = new Discord.Client()
 
@@ -93,10 +92,9 @@ let topic = ethers.utils.id('PrizePoolCreated(address,address,address)')
 // let topic = ethers.utils.id('CompoundPrizePoolCreated(address,address,address)')
 
 let filter = {
-  topics: [topic]
+  topics: [topic],
+  fromBlock: 7294893
 }
-
-
 
 
 const getLogs = async (_result) => {
@@ -117,17 +115,17 @@ const getLogs = async (_result) => {
   }
 }
 
-
 provider.on(filter, async (result) => {
   const poolCreatedArgs = await getLogs(result)
 
+  console.log(`found result!`, poolCreatedArgs.creator, poolCreatedArgs.prizePool)
   logger.info(`found result!`, poolCreatedArgs.creator, poolCreatedArgs.prizePool)
 
   sendDiscordMsg(poolCreatedArgs)
 })
 
 
-provider.resetEventsBlock(7294830)
+provider.resetEventsBlock(7294893)
 
 const sendDiscordMsg = async ({creator, prizePool}) => {
   const url = `https://reference-app.pooltogether.com/pools/rinkeby/${prizePool}`
