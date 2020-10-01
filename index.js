@@ -70,7 +70,7 @@ const abi = [
         "type": "address"
       }
     ],
-    "name": "CompoundPrizePoolCreated",
+    "name": "PrizePoolCreated",
     "type": "event"
   }
 ]
@@ -89,8 +89,8 @@ const prizePoolBuilderContract = new ethers.Contract(
   provider
 )
 
-// let topic = ethers.utils.id('PrizePoolCreated(address,address,address)')
-let topic = ethers.utils.id('CompoundPrizePoolCreated(address,address,address)')
+let topic = ethers.utils.id('PrizePoolCreated(address,address,address)')
+// let topic = ethers.utils.id('CompoundPrizePoolCreated(address,address,address)')
 
 let filter = {
   topics: [topic]
@@ -105,8 +105,8 @@ const getLogs = async (_result) => {
       _result
     )
 
-    const creator = eventLog.args.prizePool
-    const prizePool = eventLog.args.prizeStrategy
+    const creator = eventLog.args.creator
+    const prizePool = eventLog.args.prizePool
 
     return {
       creator,
@@ -127,7 +127,7 @@ provider.on(filter, async (result) => {
 })
 
 
-provider.resetEventsBlock(7278097)
+provider.resetEventsBlock(7294830)
 
 const sendDiscordMsg = async ({creator, prizePool}) => {
   const url = `https://reference-app.pooltogether.com/pools/rinkeby/${prizePool}`
