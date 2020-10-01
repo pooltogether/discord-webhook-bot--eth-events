@@ -1,6 +1,28 @@
 const Discord = require('discord.js')
 // const axios = require('axios')
 const ethers = require('ethers')
+const winston = require('winston')
+
+
+
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' }),
+  ],
+});
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple(),
+  }));
+}
+
+
 
 
 // TODO: Input chainId, support version #, have the reference frontend support version #s
@@ -13,7 +35,7 @@ const ethers = require('ethers')
 const client = new Discord.Client()
 
 client.on('ready', () => {
-  console.log(`Ready n' Logged in as ${client.user.tag}!`)
+  logger.log(`Ready n' Logged in as ${client.user.tag}!`)
 })
 
 // client.on('message', msg => {
@@ -109,13 +131,15 @@ const getLogs = async (_result) => {
       prizePool
     }
   } catch (e) {
-    console.error(e)
+    logger.error(e)
   }
 }
 
 
 provider.on(filter, async (result) => {
   const poolCreatedArgs = await getLogs(result)
+
+  logger.console(`found result!`, poolCreatedArgs.creator, poolCreatedArgs.prizePool)
 
   sendDiscordMsg(poolCreatedArgs)
 })
@@ -129,4 +153,6 @@ const sendDiscordMsg = async ({creator, prizePool}) => {
   await client.login(process.env.TOKEN)
   const channel = await client.channels.fetch('761067343123447808')
   channel.send(`New prize pool! :person_swimming: ${url}`)
+
+  logger.console(`sent msg with url ${url}`)
 }
