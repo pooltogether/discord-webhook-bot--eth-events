@@ -1,0 +1,18 @@
+{
+  "name": "@pooltogether/discord-webhook-bot--eth-events",
+  "version": "0.0.1",
+  "description": "",
+  "author": "Chuck Bergeron - PoolTogether Inc",
+  "repository": "git@github.com:pooltogether/webhook-bot-eth-events.git",
+  "main": "index.js",
+  "browser": "index.js",
+  "scripts": {},
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "axios": "^0.20.0",
+    "ethers": "^5.0.14"
+  }
+}
