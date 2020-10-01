@@ -1,5 +1,6 @@
-var axios = require('axios')
-var ethers = require('ethers')
+const Discord = require('discord.js')
+// const axios = require('axios')
+const ethers = require('ethers')
 
 
 // TODO: Input chainId, support version #, have the reference frontend support version #s
@@ -8,7 +9,21 @@ var ethers = require('ethers')
 
 // bot permissions:
 // permissions = 2048
-// client.channels.get('761067343123447808').send('Test')
+
+const client = new Discord.Client()
+
+client.on('ready', () => {
+  console.log(`Ready n' Logged in as ${client.user.tag}!`)
+})
+
+// client.on('message', msg => {
+//   if (msg.content === 'ping') {
+//     msg.reply('Pong!')
+//   }
+// })
+
+
+
 
 const expression = /^(\w{6})\w*(\w{4})$/
 
@@ -102,50 +117,16 @@ const getLogs = async (_result) => {
 provider.on(filter, async (result) => {
   const poolCreatedArgs = await getLogs(result)
 
-  postToDiscord(poolCreatedArgs)
+  sendDiscordMsg(poolCreatedArgs)
 })
 
 
-
-// Force starting events from this block; for this example
 provider.resetEventsBlock(7278097)
 
-
-const postToDiscord = async ({ creator, prizePool }) => {
-  const axiosInstance = axios.create({
-    timeout: 7000
-  })
+const sendDiscordMsg = async ({creator, prizePool}) => {
   const url = `https://reference-app.pooltogether.com/pools/rinkeby/${prizePool}`
 
-  try {
-    const body = {
-      'embeds': [
-        {
-          'title': 'Rinkeby: New prize pool created! :rocket:',
-          'description': url,
-          url,
-          'color': 3066993,
-          'author': {
-            'name': 'P-Tee',
-            url,
-            'icon_url': 'https://pbs.twimg.com/profile_images/1222559698060267520/I7qXovx4_400x400.jpg'
-          },
-          'footer': {
-            'text': `${new Date().toLocaleString()} - Created by: ${creator}`
-            //  ${ shorten(creator) }
-          }
-        }
-      ]
-    }
-
-    const response = await axiosInstance.post(
-      process.env.WEBHOOK_URL,
-      body
-    )
-    
-    console.log(response.data)
-  } catch (error) {
-    console.error('There was an issue:', error.message)
-    console.log(error)
-  }
+  await client.login(process.env.TOKEN)
+  const channel = await client.channels.fetch('761067343123447808')
+  channel.send(`New prize pool! :person_swimming: ${url}`)
 }
