@@ -35,7 +35,7 @@ if (process.env.NODE_ENV !== 'production') {
 const client = new Discord.Client()
 
 client.on('ready', () => {
-  logger.log(`Ready n' Logged in as ${client.user.tag}!`)
+  logger.info(`Ready n' Logged in as ${client.user.tag}!`)
 })
 
 // client.on('message', msg => {
@@ -139,7 +139,7 @@ const getLogs = async (_result) => {
 provider.on(filter, async (result) => {
   const poolCreatedArgs = await getLogs(result)
 
-  logger.console(`found result!`, poolCreatedArgs.creator, poolCreatedArgs.prizePool)
+  logger.info(`found result!`, poolCreatedArgs.creator, poolCreatedArgs.prizePool)
 
   sendDiscordMsg(poolCreatedArgs)
 })
@@ -154,5 +154,5 @@ const sendDiscordMsg = async ({creator, prizePool}) => {
   const channel = await client.channels.fetch('761067343123447808')
   channel.send(`New prize pool! :person_swimming: ${url}`)
 
-  logger.console(`sent msg with url ${url}`)
+  logger.info(`sent msg with url ${url}`)
 }
